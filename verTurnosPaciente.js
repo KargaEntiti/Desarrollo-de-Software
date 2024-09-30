@@ -6,8 +6,8 @@ function generateDays() {
   const daysTable = document.getElementById("daysTable");
   daysTable.innerHTML = ""; // Limpiar la tabla existente
 
-  const year = document.getElementById("yearSelect").value;
-  const month = document.getElementById("monthSelect").value;
+  var year = document.getElementById("yearSelect").value;
+  var month = document.getElementById("monthSelect").value;
 
   // Obtener el primer día del mes y el último día
   const firstDay = new Date(year, month, 1).getDay();
@@ -40,7 +40,14 @@ function generateDays() {
 
     let cell = document.createElement("td");
     cell.textContent = day;
+      
     cell.onclick = function() {
+      day = String(day).padStart(2, '0');
+      month = String(month).padStart(2, '0');
+      console.log("has seleccionado " + day +"/" + month +"/"+ year);
+        
+      fechaCompleta = day + "/" + month + "/" + year
+      filtrarPorFecha(fechaCompleta);
       selectDay(cell, day);
     };
     row.appendChild(cell);
@@ -74,12 +81,12 @@ function generateYears() {
   const currentYear = new Date().getFullYear();
 
   // Generar opciones de año dinámicamente (últimos 100 años)
-  for (let year = currentYear; year >= currentYear - 100; year--) {
-    const option = document.createElement('option');
-    option.value = year;
-    option.textContent = year;
-    yearSelect.appendChild(option);
-  }
+    for (let year = currentYear; year <= currentYear + 10; year++) {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    }
 }
 
 // Función para actualizar los días cuando cambian el mes o el año
@@ -152,6 +159,7 @@ function selectHour(event) {
 }
 
 // Función para enviar la fecha y hora seleccionada al backend
+/*
 function sendDate() {
   const year = document.getElementById("yearSelect").value;
   const month = document.getElementById("monthSelect").value;
@@ -172,6 +180,7 @@ function sendDate() {
     year: year,
     hour: selectedHour
   };
+    
 
   // Hacer una solicitud POST al backend
   fetch('URL_DEL_BACKEND', {
@@ -191,6 +200,7 @@ function sendDate() {
     alert('Error al enviar la fecha y hora.');
   });
 }
+*/
 
 // Inicializar la página al cargar
 window.onload = function() {
@@ -199,5 +209,144 @@ window.onload = function() {
   document.getElementById("monthSelect").value = today.getMonth(); // Seleccionar el mes actual
   document.getElementById("yearSelect").value = today.getFullYear(); // Seleccionar el año actual
   generateDays(); // Generar los días para el mes y año actuales
-  generateHours(); // Generar las horas
+  //generateHours(); // Generar las horas
+  queryTurnos();
 };
+
+function queryTurnos(){
+// Solicitud get, llena la tabla de turnos con los datos
+    // Hacer la solicitud al servidor
+    fetch('http://localhost:8080/verTurnos?especialidadID=1')
+        .then(response => response.json())
+        .then(data => {
+            // Obtener la tabla donde se insertarán los datos
+            const tableBody = document.querySelector("#tablaTurnos tbody");
+
+            // Recorrer cada turno en el JSON recibido
+            data.forEach(turno => {
+                // Crear una fila de la tabla
+                const row = document.createElement("tr");
+                
+                // Declarar variables de fecha
+                const fechaIso = turno.fecha;
+                const fechaDate = new Date(fechaIso);
+                
+                //turno id
+                const turnoID = turno.turnoID;
+                
+                // Nombre
+                const nombreMedicoCell = document.createElement("td");
+                nombreMedicoCell.textContent = turno.nombreMedico;
+                row.appendChild(nombreMedicoCell);
+
+                // Apellido
+                const apellidoMedicoCell = document.createElement("td");
+                apellidoMedicoCell.textContent = turno.apellidoMedico;
+                row.appendChild(apellidoMedicoCell);
+                
+                // Especialidad
+                const especialidadCell = document.createElement("td");
+                especialidadCell.textContent = turno.especialidadMedico;
+                row.appendChild(especialidadCell);
+
+                // fecha
+                const fechaCell = document.createElement("td");
+                // Formato día/mes/año
+                const dia = fechaDate.getDate().toString().padStart(2, '0'); // Añade un 0 si el día es menor a 10
+                const mes = (fechaDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0, por eso sumamos 1
+                const año = fechaDate.getFullYear();
+                const fechaFormateada = `${dia}/${mes}/${año}`;
+                fechaCell.textContent = fechaFormateada;
+                row.appendChild(fechaCell);
+                
+                // hora
+                const horaCell = document.createElement("td");
+                const horas = fechaDate.getHours().toString().padStart(2, '0');
+                const minutos = fechaDate.getMinutes().toString().padStart(2, '0');
+                const horaFormateada = `${horas}:${minutos}`;
+                horaCell.textContent = horaFormateada;
+                row.appendChild(horaCell);
+                
+                // ReservarTurno
+                const buttonCell = document.createElement("td");
+                const button = document.createElement("button");
+                button.textContent = "Reservar"
+                button.classList.add("reservarBoton");
+                buttonCell.appendChild(button);
+                button.addEventListener("click", function() {
+                    reservarTurno(turnoID);
+                });
+                row.appendChild(buttonCell);
+
+
+                // Añadir la fila a la tabla
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error)
+            popup("No se pudo conectar con el servidor, intentelo mas tarde.");
+        });
+    }
+
+function reservarTurno(id) {
+    const data = new URLSearchParams();
+    data.append('turnoID', id);
+    data.append('pacienteID', 1);
+
+    fetch('http://localhost:8080/reservarTurno', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data.toString()
+    })
+    .then(response => {
+        // Verificar si el servidor devolvió un JSON válido
+        const contentType = response.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json(); // Si es JSON, parsearlo
+        } else {
+            return response.text(); // Si no es JSON, tratarlo como texto
+        }
+    })
+    .then(result => {
+        if (typeof result === 'string') {
+            // Caso de que el servidor devuelva texto en lugar de JSON
+            console.log('Response as text:', result);
+            popup(result); // Mostrar el mensaje del servidor
+        } else {
+            // Caso de que el servidor devuelva un JSON válido
+            console.log('Success:', result);
+            popup("Turno reservado con éxito");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        popup("Error al reservar el turno");
+    });
+}
+
+function popup(message) {
+    alert(message);
+}
+
+
+function filtrarPorFecha(fechaCompleta) {
+    const fechaFiltro = fechaCompleta; // La fecha que quieres filtrar en formato DD/MM/YYYY
+    const tabla = document.getElementById("tablaTurnos");
+    const filas = tabla.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+    for (let i = 0; i < filas.length; i++) {
+        const celdaFecha = filas[i].getElementsByTagName("td")[3]; // Segunda columna
+        const fecha = celdaFecha.innerText;
+
+        // Si la fecha no coincide con el filtro, ocultamos la fila
+        if (fecha !== fechaFiltro) {
+            console.log("la fecha buscada " + fechaFiltro + "no coincide con la fecha " + fecha )
+            filas[i].style.display = "none"; // Ocultar la fila
+        } else {
+            filas[i].style.display = ""; // Mostrar la fila
+        }
+    }
+}

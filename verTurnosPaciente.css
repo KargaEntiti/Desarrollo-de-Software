@@ -1,0 +1,86 @@
+/* Estilos para los controles */
+h1,h2{
+    color: #000000;
+    font-family:monospace;
+}
+
+
+.controls {
+  margin-bottom: 10px;
+}
+
+.controls label {
+  margin-right: 10px;
+}
+
+.controls select {
+  margin-right: 20px;
+  padding: 5px;
+}
+
+/* Estilos para la tabla de días */
+.calendar {
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 15px;
+  cursor: pointer;
+}
+
+td:hover {
+  background-color: #f0f0f0;
+}
+
+.selected-day, .selected-hour {
+  background-color: #4CAF50 !important;
+  color: white;
+}
+
+.selected {
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Estilo para el valor seleccionado */
+#selectedValue, #selectedHour {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.listaTurnos{
+    font-family: sans-serif;
+    border-radius: 10px;
+    background-color: #e8e8e8;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.turnoContainer{
+
+}
+
+
+.reservarBoton{
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
