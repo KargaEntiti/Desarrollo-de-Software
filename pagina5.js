@@ -1,5 +1,7 @@
 let selectedDay = null; // Variable para almacenar el día seleccionado
 let selectedHour = null; // Variable para almacenar la hora seleccionada
+let selectedMonth = null;
+let selectedYear = null;
 
 // Función para generar los días en base al mes y año seleccionados
 function generateDays() {
@@ -40,19 +42,35 @@ function generateDays() {
 
     let cell = document.createElement("td");
     cell.textContent = day;
+    
+      day = String(day).padStart(2, '0');
+      month = String(month).padStart(2, '0');
+
+      fechaCompleta = day + "/" + month + "/" + year
+      
+    if(isAvaliable(fechaCompleta)){
+        console.log("pintando " + fechaCompleta);
+        highlightDay(cell,day);
+    }
       
     cell.onclick = function() {
+    
       day = String(day).padStart(2, '0');
       month = String(month).padStart(2, '0');
       console.log("has seleccionado " + day +"/" + month +"/"+ year);
-        
+
       fechaCompleta = day + "/" + month + "/" + year
+        
       filtrarPorFecha(fechaCompleta);
       selectDay(cell, day);
+      selectedDay = day;
+      selectedMonth = month;
+      selectedYear = year;
+        
     };
     row.appendChild(cell);
   }
-
+    
   // Añadir la fila restante
   if (row.children.length > 0) {
     daysTable.appendChild(row);
@@ -75,6 +93,13 @@ function selectDay(cell, day) {
   document.getElementById("selectedValue").textContent = "Día seleccionado: " + day;
 }
 
+// Función para seleccionar un día y resaltarlo
+function highlightDay(cell, day) {
+  // Marcar el nuevo día seleccionado
+  cell.classList.add("avaliable-day");
+}
+
+
 // Función para generar los años en el selector de año
 function generateYears() {
   const yearSelect = document.getElementById("yearSelect");
@@ -91,8 +116,11 @@ function generateYears() {
 
 // Función para actualizar los días cuando cambian el mes o el año
 function updateDays() {
-  generateDays(); // Regenerar los días disponibles
+  generateDays(); // Regenerar los días disponibleshighlightAvaliableDays(); // resaltar los dias que posean turnos
 }
+
+
+
 /*
 // Función para generar la tabla de horarios con intervalos de 30 minutos
 function generateHours() {
@@ -213,81 +241,86 @@ window.onload = function() {
   queryTurnos();
 };
 
+var listaTurnos = [];
+
 function queryTurnos(){
 // Solicitud get, llena la tabla de turnos con los datos
     // Hacer la solicitud al servidor
     fetch('http://localhost:8080/verTurnos?especialidadID=1')
         .then(response => response.json())
         .then(data => {
-            // Obtener la tabla donde se insertarán los datos
-            const tableBody = document.querySelector("#tablaTurnos tbody");
-
-            // Recorrer cada turno en el JSON recibido
-            data.forEach(turno => {
-                // Crear una fila de la tabla
-                const row = document.createElement("tr");
-                
-                // Declarar variables de fecha
-                const fechaIso = turno.fecha;
-                const fechaDate = new Date(fechaIso);
-                
-                //turno id
-                const turnoID = turno.turnoID;
-                
-                // Nombre
-                const nombreMedicoCell = document.createElement("td");
-                nombreMedicoCell.textContent = turno.nombreMedico;
-                row.appendChild(nombreMedicoCell);
-
-                // Apellido
-                const apellidoMedicoCell = document.createElement("td");
-                apellidoMedicoCell.textContent = turno.apellidoMedico;
-                row.appendChild(apellidoMedicoCell);
-                
-                // Especialidad
-                const especialidadCell = document.createElement("td");
-                especialidadCell.textContent = turno.especialidadMedico;
-                row.appendChild(especialidadCell);
-
-                // fecha
-                const fechaCell = document.createElement("td");
-                // Formato día/mes/año
-                const dia = fechaDate.getDate().toString().padStart(2, '0'); // Añade un 0 si el día es menor a 10
-                const mes = (fechaDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0, por eso sumamos 1
-                const año = fechaDate.getFullYear();
-                const fechaFormateada = `${dia}/${mes}/${año}`;
-                fechaCell.textContent = fechaFormateada;
-                row.appendChild(fechaCell);
-                
-                // hora
-                const horaCell = document.createElement("td");
-                const horas = fechaDate.getHours().toString().padStart(2, '0');
-                const minutos = fechaDate.getMinutes().toString().padStart(2, '0');
-                const horaFormateada = `${horas}:${minutos}`;
-                horaCell.textContent = horaFormateada;
-                row.appendChild(horaCell);
-                
-                // ReservarTurno
-                const buttonCell = document.createElement("td");
-                const button = document.createElement("button");
-                button.textContent = "Reservar"
-                button.classList.add("reservarBoton");
-                buttonCell.appendChild(button);
-                button.addEventListener("click", function() {
-                    reservarTurno(turnoID);
-                });
-                row.appendChild(buttonCell);
-
-
-                // Añadir la fila a la tabla
-                tableBody.appendChild(row);
-            });
+            listaTurnos = data;
+            llenarTurnosDisponibles(listaTurnos);
         })
         .catch(error => {
             console.error('Error:', error)
             popup("No se pudo conectar con el servidor, intentelo mas tarde.");
         });
     }
+
+function llenarTurnosDisponibles(turnos){
+    turnos.forEach(turno => {
+            // Obtener la tabla donde se insertarán los datos
+        const tableBody = document.querySelector("#tablaTurnos tbody");
+        // Crear una fila de la tabla
+        const row = document.createElement("tr");
+
+        // Declarar variables de fecha
+        const fechaIso = turno.fecha;
+        const fechaDate = new Date(fechaIso);
+
+        //turno id
+        const turnoID = turno.turnoID;
+
+        // Nombre
+        const nombreMedicoCell = document.createElement("td");
+        nombreMedicoCell.textContent = turno.nombreMedico;
+        row.appendChild(nombreMedicoCell);
+
+        // Apellido
+        const apellidoMedicoCell = document.createElement("td");
+        apellidoMedicoCell.textContent = turno.apellidoMedico;
+        row.appendChild(apellidoMedicoCell);
+
+        // Especialidad
+        const especialidadCell = document.createElement("td");
+        especialidadCell.textContent = turno.especialidadMedico;
+        row.appendChild(especialidadCell);
+
+        // fecha
+        const fechaCell = document.createElement("td");
+        // Formato día/mes/año
+        const dia = fechaDate.getDate().toString().padStart(2, '0'); // Añade un 0 si el día es menor a 10
+        const mes = (fechaDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0, por eso sumamos 1
+        const año = fechaDate.getFullYear();
+        const fechaFormateada = `${dia}/${mes}/${año}`;
+        fechaCell.textContent = fechaFormateada;
+        row.appendChild(fechaCell);
+
+        // hora
+        const horaCell = document.createElement("td");
+        const horas = fechaDate.getHours().toString().padStart(2, '0');
+        const minutos = fechaDate.getMinutes().toString().padStart(2, '0');
+        const horaFormateada = `${horas}:${minutos}`;
+        horaCell.textContent = horaFormateada;
+        row.appendChild(horaCell);
+
+        // ReservarTurno
+        const buttonCell = document.createElement("td");
+        const button = document.createElement("button");
+        button.textContent = "Reservar"
+        button.classList.add("reservarBoton");
+        buttonCell.appendChild(button);
+        button.addEventListener("click", function() {
+            reservarTurno(turnoID);
+        });
+        row.appendChild(buttonCell);
+
+
+        // Añadir la fila a la tabla
+        tableBody.appendChild(row);
+    });
+}
 
 function reservarTurno(id) {
     const data = new URLSearchParams();
@@ -331,14 +364,29 @@ function popup(message) {
     alert(message);
 }
 
-
-function filtrarPorFecha(fechaCompleta) {
-    const fechaFiltro = fechaCompleta; // La fecha que quieres filtrar en formato DD/MM/YYYY
+function isAvaliable(fechaCompleta){
+    const fechaFiltro = fechaCompleta;
     const tabla = document.getElementById("tablaTurnos");
     const filas = tabla.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
 
     for (let i = 0; i < filas.length; i++) {
-        const celdaFecha = filas[i].getElementsByTagName("td")[3]; // Segunda columna
+        const celdaFecha = filas[i].getElementsByTagName("td")[3];
+        const fecha = celdaFecha.innerText;
+
+        // Si la fecha coincide con la solicitada, devolver true
+        if (fecha == fechaFiltro) {
+            return true;
+        }
+    }
+}
+
+function filtrarPorFecha(fechaCompleta) {
+    const fechaFiltro = fechaCompleta;
+    const tabla = document.getElementById("tablaTurnos");
+    const filas = tabla.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+    for (let i = 0; i < filas.length; i++) {
+        const celdaFecha = filas[i].getElementsByTagName("td")[3];
         const fecha = celdaFecha.innerText;
 
         // Si la fecha no coincide con el filtro, ocultamos la fila

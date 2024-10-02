@@ -1,3 +1,8 @@
+body{
+    padding: 100px;
+    padding-left:20%;
+    padding-right: 20%;
+}
 /* Estilos para los controles */
 h1,h2{
     color: #000000;
@@ -42,6 +47,11 @@ td:hover {
 .selected-day, .selected-hour {
   background-color: #4CAF50 !important;
   color: white;
+}
+
+.avaliable-day, .selected-hour {
+  background-color: #457100 !important;
+  color: #ffffff;
 }
 
 .selected {
