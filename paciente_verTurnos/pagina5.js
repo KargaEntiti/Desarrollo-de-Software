@@ -1,6 +1,3 @@
-let selectedDay = null; // Variable para almacenar el día seleccionado
-let selectedHour = null; // Variable para almacenar la hora seleccionada
-let selectedMonth = null;
 let selectedYear = null;
 
 // Función para generar los días en base al mes y año seleccionados
@@ -57,14 +54,11 @@ function generateCallendar() {
     
       day = String(day).padStart(2, '0');
       month = String(month).padStart(2, '0');
-      console.log("has seleccionado " + day +"/" + month +"/"+ year);
 
       fechaCompleta = day + "/" + month + "/" + year
         
       filtrarPorFecha(fechaCompleta);
       selectDay(cell, day);
-      selectedDay = day;
-      selectedMonth = month;
       selectedYear = year;
         
     };
@@ -89,7 +83,6 @@ function selectDay(cell, day) {
 
   // Marcar el nuevo día seleccionado
   cell.classList.add("selected-day");
-  selectedDay = day; // Guardar el día seleccionado
 
   // Mostrar el día seleccionado
   document.getElementById("selectedValue").textContent = "Día seleccionado: " + day;
@@ -117,12 +110,32 @@ function generateYears() {
 }
 
 
-// Función para manejar la selección de una hora
-function selectHour(event) {
-  const selectedHour = event.target.value;
-  document.getElementById("selectedHour").textContent = selectedHour;
-  // Aquí puedes realizar acciones adicionales con la hora seleccionada, como enviar los datos
+function generateMonths(){
+  const monthSelect = document.getElementById('monthSelect');
+  const yearSelect = document.getElementById('yearSelect');
+  const currentYear = new Date().getFullYear(); // Obtiene el año actual
+  const currentMonth = new Date().getMonth(); // Obtiene el mes actual (0 - enero, 11 - diciembre)
+  const selectedYear = parseInt(yearSelect.value); // Año seleccionado en el select
+  const months = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+
+  // Limpiamos el select de meses
+  monthSelect.innerHTML = '';
+
+  // Si el año seleccionado es mayor al actual, mostrar todos los meses
+  const startMonth = (selectedYear > currentYear) ? 0 : currentMonth;
+
+  // Agregamos los meses desde el mes de inicio hasta diciembre
+  for (let i = startMonth; i < months.length; i++) {
+    const option = document.createElement('option');
+    option.value = i + 1; // Los valores van de 1 a 12
+    option.textContent = months[i];
+    monthSelect.appendChild(option);
+  }
 }
+
 
 
 
@@ -297,6 +310,7 @@ async function main(){
     await queryTurnos();
     //Selectores:
     generateYears(); 
+    generateMonths();
     const today = new Date();
     const monthValue = Number(today.getMonth()) + 1; 
     document.getElementById("monthSelect").value = monthValue.toString();
