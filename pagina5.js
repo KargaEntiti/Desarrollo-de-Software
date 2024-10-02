@@ -4,7 +4,7 @@ let selectedMonth = null;
 let selectedYear = null;
 
 // Función para generar los días en base al mes y año seleccionados
-function generateDays() {
+function generateCallendar() {
   const daysTable = document.getElementById("daysTable");
   daysTable.innerHTML = ""; // Limpiar la tabla existente
 
@@ -43,14 +43,14 @@ function generateDays() {
     let cell = document.createElement("td");
     cell.textContent = day;
     
-      day = String(day).padStart(2, '0');
-      month = String(month).padStart(2, '0');
+    day = String(day).padStart(2, '0');
+    month = String(month).padStart(2, '0');
 
-      fechaCompleta = day + "/" + month + "/" + year
-      
+    fechaCompleta = day + "/" + month + "/" + year
+
     if(isAvaliable(fechaCompleta)){
-        console.log("pintando " + fechaCompleta);
-        highlightDay(cell,day);
+      console.log("pintando " + fechaCompleta);
+      highlightDay(cell,day);
     }
       
     cell.onclick = function() {
@@ -68,6 +68,8 @@ function generateDays() {
       selectedYear = year;
         
     };
+    console.log("generando row de dia")
+
     row.appendChild(cell);
   }
     
@@ -114,70 +116,6 @@ function generateYears() {
     }
 }
 
-// Función para actualizar los días cuando cambian el mes o el año
-function updateDays() {
-  generateDays(); // Regenerar los días disponibleshighlightAvaliableDays(); // resaltar los dias que posean turnos
-}
-
-
-
-/*
-// Función para generar la tabla de horarios con intervalos de 30 minutos
-function generateHours() {
-  const hoursTable = document.getElementById("hoursTable");
-  hoursTable.innerHTML = ""; // Limpiar la tabla existente
-
-  // Generar las horas de 00:00 a 23:30 en intervalos de 30 minutos
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 30) {
-      let row = document.createElement("tr");
-      let cell = document.createElement("td");
-
-      // Formato para mostrar la hora en HH:MM
-      let formattedHour = hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0');
-      cell.textContent = formattedHour;
-      cell.onclick = function() {
-        selectHour(cell, formattedHour);
-      };
-
-      row.appendChild(cell);
-      hoursTable.appendChild(row);
-    }
-  }
-}
-
-// Función para seleccionar una hora y resaltarla
-function selectHour(cell, hour) {
-  // Desmarcar cualquier hora previamente seleccionada
-  const previousSelectedHour = document.querySelector(".selected-hour");
-  if (previousSelectedHour) {
-    previousSelectedHour.classList.remove("selected-hour");
-  }
-
-  // Marcar la nueva hora seleccionada
-  cell.classList.add("selected-hour");
-  selectedHour = hour; // Guardar la hora seleccionada
-
-  // Mostrar la hora seleccionada
-  document.getElementById("selectedHour").textContent = "Hora seleccionada: " + hour;
-}
-*/
-
-function generateHours() {
-  const selectElement = document.getElementById("hoursSelect");
-  selectElement.innerHTML = ""; // Limpiar las opciones existentes
-
-  // Generar las opciones de hora de 08:00 a 23:00 en intervalos de 30 minutos
-  for (let hour = 8; hour < 21; hour++) {
-    for (let minute = 0; minute < 60; minute += 30) {
-      let option = document.createElement("option");
-      let formattedHour = hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0');
-      option.value = formattedHour;
-      option.textContent = formattedHour;
-      selectElement.appendChild(option);
-    }
-  }
-}
 
 // Función para manejar la selección de una hora
 function selectHour(event) {
@@ -186,81 +124,31 @@ function selectHour(event) {
   // Aquí puedes realizar acciones adicionales con la hora seleccionada, como enviar los datos
 }
 
-// Función para enviar la fecha y hora seleccionada al backend
-/*
-function sendDate() {
-  const year = document.getElementById("yearSelect").value;
-  const month = document.getElementById("monthSelect").value;
 
-  if (selectedDay === null) {
-    alert("Por favor, seleccione un día.");
-    return;
-  }
-
-  if (selectedHour === null) {
-    alert("Por favor, seleccione una hora.");
-    return;
-  }
-
-  const selectedDateTime = {
-    day: selectedDay,
-    month: parseInt(month) + 1, // Añadir 1 al mes porque en JavaScript empieza en 0
-    year: year,
-    hour: selectedHour
-  };
-    
-
-  // Hacer una solicitud POST al backend
-  fetch('URL_DEL_BACKEND', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(selectedDateTime)
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Éxito:', data);
-    alert('Fecha y hora enviadas correctamente.');
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-    alert('Error al enviar la fecha y hora.');
-  });
-}
-*/
-
-// Inicializar la página al cargar
-window.onload = function() {
-  generateYears(); // Llenar el selector de años
-  const today = new Date();
-  document.getElementById("monthSelect").value = today.getMonth(); // Seleccionar el mes actual
-  document.getElementById("yearSelect").value = today.getFullYear(); // Seleccionar el año actual
-  generateDays(); // Generar los días para el mes y año actuales
-  //generateHours(); // Generar las horas
-  queryTurnos();
-};
 
 var listaTurnos = [];
+var gene = true;
 
-function queryTurnos(){
-// Solicitud get, llena la tabla de turnos con los datos
-    // Hacer la solicitud al servidor
-    fetch('http://localhost:8080/verTurnos?especialidadID=1')
-        .then(response => response.json())
-        .then(data => {
-            listaTurnos = data;
-            llenarTurnosDisponibles(listaTurnos);
-        })
-        .catch(error => {
-            console.error('Error:', error)
-            popup("No se pudo conectar con el servidor, intentelo mas tarde.");
-        });
-    }
+async function queryTurnos() {
+  try {
+      // Hacer la solicitud al servidor
+      const response = await fetch('http://localhost:8080/verTurnos?especialidadID=1');
+      if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+      }
+      const data = await response.json();
+      listaTurnos = data;
+      llenarTurnosDisponibles(listaTurnos);
+  } catch (error) {
+      console.error('Error:', error);
+      popup("No se pudo conectar con el servidor, inténtelo más tarde.");
+  }
+}
 
 function llenarTurnosDisponibles(turnos){
     turnos.forEach(turno => {
-            // Obtener la tabla donde se insertarán los datos
+        
+        // Obtener la tabla donde se insertarán los datos
         const tableBody = document.querySelector("#tablaTurnos tbody");
         // Crear una fila de la tabla
         const row = document.createElement("tr");
@@ -312,12 +200,13 @@ function llenarTurnosDisponibles(turnos){
         button.classList.add("reservarBoton");
         buttonCell.appendChild(button);
         button.addEventListener("click", function() {
-            reservarTurno(turnoID);
+        reservarTurno(turnoID);
         });
         row.appendChild(buttonCell);
 
 
         // Añadir la fila a la tabla
+        console.log("generando row de turno")
         tableBody.appendChild(row);
     });
 }
@@ -365,17 +254,21 @@ function popup(message) {
 }
 
 function isAvaliable(fechaCompleta){
+    
     const fechaFiltro = fechaCompleta;
     const tabla = document.getElementById("tablaTurnos");
     const filas = tabla.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
 
     for (let i = 0; i < filas.length; i++) {
+        console.log("isavas");
         const celdaFecha = filas[i].getElementsByTagName("td")[3];
         const fecha = celdaFecha.innerText;
 
         // Si la fecha coincide con la solicitada, devolver true
         if (fecha == fechaFiltro) {
             return true;
+        }else{
+          console.log(fecha + " no coincide con " + fechaFiltro);
         }
     }
 }
@@ -398,3 +291,17 @@ function filtrarPorFecha(fechaCompleta) {
         }
     }
 }
+
+async function main(){
+
+    await queryTurnos();
+    //Selectores:
+    generateYears(); 
+    const today = new Date();
+    const monthValue = Number(today.getMonth()) + 1; 
+    document.getElementById("monthSelect").value = monthValue.toString();
+    document.getElementById("yearSelect").value = today.getFullYear(); // Seleccionar el año actual
+    generateCallendar();
+  }
+  
+main();

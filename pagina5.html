@@ -13,7 +13,7 @@
   <div class="controls">
     <!-- Selector de Mes -->
     <label for="monthSelect">Mes:</label>
-    <select id="monthSelect" onchange="updateDays()">
+    <select id="monthSelect" onchange="generateCallendar()">
       <option value="1">Enero</option>
       <option value="2">Febrero</option>
       <option value="3">Marzo</option>
@@ -30,7 +30,7 @@
 
     <!-- Selector de Año -->
     <label for="yearSelect">Año:</label>
-    <select id="yearSelect" onchange="updateDays()">
+    <select id="yearSelect" onchange="generateCallendar()">
       <!-- Llenamos los años con JavaScript -->
     </select>
   </div>
