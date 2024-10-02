@@ -6,7 +6,8 @@ var gene = true;
 async function queryTurnos() {
   try {
       // Hacer la solicitud al servidor
-      const response = await fetch('http://localhost:8080/verTurnos?especialidadID=1');
+      url = 'http://localhost:8080/verTurnos?especialidadID=1'
+      const response = await fetch(url);
       if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');
       }
@@ -15,7 +16,7 @@ async function queryTurnos() {
       return listaTurnos;
   } catch (error) {
       console.error('Error:', error);
-      popup("No se pudo conectar con el servidor, inténtelo más tarde.");
+      popup("No se pudo conectar con el servidor, inténtelo más tarde." + url);
   }
 }
 
