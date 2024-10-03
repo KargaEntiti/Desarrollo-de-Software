@@ -1,6 +1,25 @@
 let selectedDay = null; // Variable para almacenar el día seleccionado
 let selectedHour = null; // Variable para almacenar la hora seleccionada
 
+// Fechas y horas no disponibles (formato: 'DD/MM/YYYY HH:MM')
+const unavailableDates = [
+  { day: 0 }, // Todos los domingos
+  { date: '03/10/2024', hour: '15:00' }, // 3 de octubre de 2024 a las 15:00
+  { date: '04/10/2024', hour: '10:30' }, // 4 de octubre de 2024 a las 10:30
+  { date: '05/10/2024', hour: '14:00' }, // 5 de octubre de 2024 a las 14:00
+  { date: '10/10/2024', hour: '16:00' }  // 10 de octubre de 2024 a las 16:00
+];
+
+// Función para verificar si la hora en el día seleccionado está disponible
+function isUnavailableHour(hour) {
+  const year = document.getElementById("yearSelect").value;
+  const month = document.getElementById("monthSelect").value;
+  const formattedDate = `${selectedDay.toString().padStart(2, '0')}/${(parseInt(month) + 1).toString().padStart(2, '0')}/${year}`;
+
+  // Bloquear las fechas y horas definidas en el arreglo `unavailableDates`
+  return unavailableDates.some(date => date.date === formattedDate && date.hour === hour);
+}
+
 // Función para generar los días en base al mes y año seleccionados
 function generateDays() {
   const daysTable = document.getElementById("daysTable");
@@ -40,9 +59,20 @@ function generateDays() {
 
     let cell = document.createElement("td");
     cell.textContent = day;
-    cell.onclick = function() {
-      selectDay(cell, day);
-    };
+
+    // Obtener el día de la semana (0: Domingo, 1: Lunes, etc.)
+    let currentDate = new Date(year, month, day);
+    let weekDay = currentDate.getDay();
+
+    // Verificar si es un domingo o una fecha específica no disponible
+    if (weekDay === 0 || isUnavailableDay(day, month, year)) {
+      cell.classList.add("unavailable");
+    } else {
+      // Solo permitir clic en días disponibles
+      cell.onclick = function() {
+        selectDay(cell, day);
+      };
+    }
     row.appendChild(cell);
   }
 
@@ -50,6 +80,7 @@ function generateDays() {
   if (row.children.length > 0) {
     daysTable.appendChild(row);
   }
+
 }
 
 // Función para seleccionar un día y resaltarlo
@@ -93,7 +124,7 @@ function generateHours() {
   hoursTable.innerHTML = ""; // Limpiar la tabla existente
 
   // Generar las horas de 00:00 a 23:30 en intervalos de 30 minutos
-  for (let hour = 0; hour < 24; hour++) {
+  for (let hour = 11; hour < 18; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
       let row = document.createElement("tr");
       let cell = document.createElement("td");
@@ -104,11 +135,35 @@ function generateHours() {
       cell.onclick = function() {
         selectHour(cell, formattedHour);
       };
-
+      /*
+      // Verificar si la hora está bloqueada solo para el 3 de octubre
+      if (isUnavailableHour(formattedHour)) {
+        cell.classList.add("unavailable");
+      } else {
+        cell.onclick = function() {
+          selectHour(cell, formattedHour);
+        };
+      }
+      */
       row.appendChild(cell);
       hoursTable.appendChild(row);
+      
     }
   }
+}
+
+// Función para verificar si la hora en el día seleccionado está disponible
+function isUnavailableHour(hour) {
+  const year = document.getElementById("yearSelect").value;
+  const month = document.getElementById("monthSelect").value;
+  const formattedDate = `${selectedDay.toString().padStart(2, '0')}/${(parseInt(month) + 1).toString().padStart(2, '0')}/${year}`;
+
+  // Bloquear la hora de las 15:00 solo para el 3 de octubre de 2024
+  if (formattedDate === '03/10/2024' && hour === '15:00') {
+    return true;
+  }
+
+  return false; // Las demás horas están disponibles
 }
 
 // Función para seleccionar una hora y resaltarla
@@ -160,12 +215,19 @@ function sendDate() {
   .then(response => response.json())
   .then(data => {
     console.log('Éxito:', data);
-    alert('Fecha y hora enviadas correctamente.');
+    
+    // Formatear la fecha y hora para mostrar en la alerta
+    const formattedDateTime = `Fecha: ${selectedDateTime.day}/${selectedDateTime.month}/${selectedDateTime.year} Hora: ${selectedDateTime.hour}`;
+    
+    // Mostrar la fecha y hora en la alerta
+    alert('Fecha y hora enviadas correctamente. ' + formattedDateTime);
   })
   .catch((error) => {
+    const formattedDateTime = `Fecha: ${selectedDateTime.day}/${selectedDateTime.month}/${selectedDateTime.year} Hora: ${selectedDateTime.hour}`;
     console.error('Error:', error);
-    alert('se envio el archivo.');
+    alert(formattedDateTime);
   });
+
 }
 
 // Inicializar la página al cargar
@@ -177,3 +239,18 @@ window.onload = function() {
   generateDays(); // Generar los días para el mes y año actuales
   generateHours(); // Generar las horas
 };
+
+// Función para verificar si un día está bloqueado
+function isUnavailableDay(day, month, year) {
+  const formattedDate = `${day.toString().padStart(2, '0')}/${(parseInt(month) + 1).toString().padStart(2, '0')}/${year}`;
+
+  // Bloquear los domingos
+  let currentDate = new Date(year, month, day);
+  if (currentDate.getDay() === 0) { // 0 es domingo
+    return true;
+  }
+
+  // No bloquear el 3 de octubre como día, pero manejaremos las horas más tarde
+  return false;
+}
+
