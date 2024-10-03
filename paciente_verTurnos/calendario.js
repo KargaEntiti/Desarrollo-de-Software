@@ -4,7 +4,7 @@ const calendarGrid = document.getElementById('calendar');
 const monthSelect = document.getElementById('month');
 const yearSelect = document.getElementById('year');
 
-function getFechaCompleta(day,month,year){ //estandarizar el formato fecha en DD/MM/AAAA
+function getFechaCompleta(day,month,year){ // Estandarizar el formato fecha en DD/MM/AAAA
     day = String(day).padStart(2, '0');
     month = String(month).padStart(2, '0');
     month = Number(month) + 1;
