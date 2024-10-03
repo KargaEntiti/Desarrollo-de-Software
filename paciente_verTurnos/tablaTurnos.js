@@ -31,10 +31,10 @@ function llenarTurnosDisponibles(turnos){
         // fecha
         const fechaCell = document.createElement("td");
         // Formato día/mes/año
-        const dia = fechaDate.getDate().toString().padStart(2, '0'); // Añade un 0 si el día es menor a 10
-        const mes = (fechaDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0, por eso sumamos 1
+        const dia = fechaDate.getDate()
+        const mes = fechaDate.getMonth()
         const año = fechaDate.getFullYear();
-        const fechaFormateada = `${dia}/${mes}/${año}`;
+        fechaFormateada = getFechaCompleta(dia,mes,año);
         fechaCell.textContent = fechaFormateada;
         row.appendChild(fechaCell);
 

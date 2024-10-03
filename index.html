@@ -3,43 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>medico o paciente</title>
-    <style>
-        body {
-            text-align: center;
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .rectangulo {
-            display: inline-block;
-            width: 200px;
-            height: 100px;
-            margin: 20px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            text-align: center;
-            line-height: 100px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="index.css">
+    <title>Bienvenido</title>
 </head>
 <body>
-<h1> ¡Bienvenido! Elija una opción </h1>
+    <div class="navbar">
+        <h1> ¡Bienvenido! Elija una opción </h1>
+    </div>
     <div class="container">
         <div class="column">
-            <div class="rectangulo" onclick="location.href='opcionesmedico.html'">soy medico</div>
-            <div class="rectangulo" onclick="location.href='opcionespaciente.html'">soy paciente</div>
+            <div class="rectangulo" onclick="location.href='opcionesmedico.html'">Soy medico</div>
+            <div class="rectangulo" onclick="location.href='opcionespaciente.html'">Soy paciente</div>
         </div>
     </div>
 </body>

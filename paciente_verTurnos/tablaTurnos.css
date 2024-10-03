@@ -8,8 +8,10 @@ table {
   th, td {
     border: 1px solid #ddd;
     text-align: center;
+    justify-content: center;
+    align-content: center;
     cursor: pointer;
-    padding-top: 20px;
+    padding: 10px;
   }
   
   td:hover {
@@ -17,17 +19,21 @@ table {
   }
   
   
-  
-  
+
   .listaTurnos{
       font-family: sans-serif;
       border-radius: 10px;
-      background-color: #e8e8e8;
       align-content: center;
       align-items: center;
       justify-content: center;
+      width:100%;
   }
   
+.medic-table{
+    background-color: #e6e6e6;
+    border-radius: 30px;
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.16);
+}
   
   
   .reservarBoton{
