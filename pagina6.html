@@ -2,11 +2,22 @@
 <html lang="es">
 <head>
 	<title>tarjeta camila</title>
-<body style="background-color:#87CEED"></body>
 <style>
+body {
+  background-color: #CDD;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .tabla-turnos{
     border-collapse: collapse;
-    margin: 20px;
+    margin: 0 auto;
     background-color: white;
 }
 .tabla-turnos th, .tabla-turnos td {
@@ -17,16 +28,19 @@
 .tabla-turnos th {
     background-color: white;
 }
+
 </style>
 
 </head>
 <body>
+  <div class="container">
+    </div>
 
 	<h1>ver mis turnos como medico</h1>
 <h2>elija una fecha</h2>
 <input type="date" name="fecha_elegida" id="fecha" style="width: 200px; height: 30px; font-size: 16px;">
 <p id="mostrarFecha"></p>
-<h4>nota: seleccionar fecha 19/09/2024</h4>
+<h4>nota: seleccionar fecha 18/10/2024</h4>
 
   <script>
 	// Obtener una referencia al elemento input de tipo date
@@ -46,16 +60,20 @@ inputFecha.addEventListener('change', () => {
 //turnos
 
 const turnos = [
-	"18/09/2024,09:40,Juan Perez,12345678,Consulta de rutina",
-   "18/09/2024,10:30,María García,8654321,Consulta de rutina",
-"18/09/2024,10:50,Lucas Lopez,7654321,Revision de analisis"
+"18/10/2024,09:00,Juan Perez,12345678,Consulta de rutina",
+	"18/10/2024,09:40,Juan Solari,1234555,Consulta de rutina",
+   "18/10/2024,10:30,María García,8654321,Consulta de rutina",
+"18/10/2024,10:50,Lucas Lopez,7654321,Revisión de analisis",
+"18/10/2024,11:20,Norma Perez,33335678,Consulta de rutina",
+"18/10/2024,11:40,Lorna Susana Suarez,77775678,Consulta de rutina",
+"18/10/2024,12:00,Teresa Suarez,77775678,Consulta de rutina"
 ];
 function buscarTurnosPorFecha() {
 	const fechaSeleccionada = new Date(inputFecha.value);
 	const turnosEncontrados = turnos.filter(turno => {
     	const [fechaTurno, hora, paciente, dni, motivo] = turno.split(',');
     	const partesFecha = fechaTurno.split('/');
-    	const fechaTurnoDate = new Date(partesFecha[2], partesFecha[1] - 1, partesFecha[0]);
+    	const fechaTurnoDate = new Date(partesFecha[2], partesFecha[1] - 1, partesFecha[0]-1);
     	return fechaSeleccionada.getFullYear() === fechaTurnoDate.getFullYear() &&
            	fechaSeleccionada.getMonth() === fechaTurnoDate.getMonth() &&
            	fechaSeleccionada.getDate() === fechaTurnoDate.getDate();
