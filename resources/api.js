@@ -53,7 +53,9 @@ function api_reservarTurno(id) {
     .then(response => {
         if (response.ok) {
             // Si la respuesta es 200 OK
-            popup("Turno reservado con éxito");necesario
+            return response.text().then(body => {
+                popup(body); // Mostrar el cuerpo de la respuesta en el popup
+            });
         } else {
             // Si hay un error, lanzar un error con el estado
             return response.json().then(error => {
@@ -61,11 +63,7 @@ function api_reservarTurno(id) {
             });
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        // Mostrar popup de error
-        popup("Error al reservar el turno, puede que ya este reservado.");
-    });
+    
 }
 
 
