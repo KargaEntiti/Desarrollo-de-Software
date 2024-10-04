@@ -1,0 +1,18 @@
+
+ .button1{
+      width: 200px;
+      height: 200px;
+      line-height: 200px;
+      margin:50px;
+      background-color: #e5e5e5;
+      color: #000000;
+      border: none;
+      padding: 10px 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+  }

@@ -7,27 +7,15 @@ body {
 
 
 .container {
-    margin-top:20vh;
-    margin-bottom: 50vh;
+
 }
 
 .column {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
 }
 
-.rectangulo {
-    display: inline-block;
-    width: 200px;
-    height: 100px;
-    margin: 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    text-align: center;
-    font-size: 24px;
-    line-height: 100px;
-    cursor: pointer;
-}
+
 
 
