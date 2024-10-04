@@ -1,18 +1,28 @@
 
  .button1{
+      justify-content: center;
+      align-content: center;
       width: 200px;
       height: 200px;
-      line-height: 200px;
-      margin:50px;
-      background-color: #e5e5e5;
+      margin:10px;
+      margin-top: 20px;
+      background-color: #ededed;
       color: #000000;
       border: none;
       padding: 10px 15px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 15px;
+      font-size: 30px;
       cursor: pointer;
       border-radius: 5px;
       transition: background-color 0.3s ease;
-  }
+      box-shadow: 10px 10px 10px 1px #acacac;
+      border-radius: 10px;
+      font-family: sans-serif;
+}
+
+.button1 p {
+    margin: auto;
+}
+
+.button1:hover{
+    transform: scale(0.9)
+}
