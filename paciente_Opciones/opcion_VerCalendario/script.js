@@ -97,6 +97,9 @@ function selectDay(cell, day) {
 
   // Mostrar el día seleccionado
   document.getElementById("selectedValue").textContent = "Día seleccionado: " + day;
+
+  // Generar las horas disponibles para el día seleccionado
+  generateHours();
 }
 
 // Función para generar los años en el selector de año
@@ -123,6 +126,12 @@ function generateHours() {
   const hoursTable = document.getElementById("hoursTable");
   hoursTable.innerHTML = ""; // Limpiar la tabla existente
 
+  if (selectedDay === null) {
+    // Si no hay un día seleccionado, no generamos horas
+    document.getElementById("selectedHour").textContent = "Seleccione un día primero";
+    return;
+  }
+
   // Generar las horas de 00:00 a 23:30 en intervalos de 30 minutos
   for (let hour = 11; hour < 18; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
@@ -132,11 +141,8 @@ function generateHours() {
       // Formato para mostrar la hora en HH:MM
       let formattedHour = hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0');
       cell.textContent = formattedHour;
-      cell.onclick = function() {
-        selectHour(cell, formattedHour);
-      };
-      /*
-      // Verificar si la hora está bloqueada solo para el 3 de octubre
+
+      // Verificar si la hora está bloqueada
       if (isUnavailableHour(formattedHour)) {
         cell.classList.add("unavailable");
       } else {
@@ -144,10 +150,10 @@ function generateHours() {
           selectHour(cell, formattedHour);
         };
       }
-      */
+
       row.appendChild(cell);
       hoursTable.appendChild(row);
-      
+
     }
   }
 }
@@ -158,12 +164,7 @@ function isUnavailableHour(hour) {
   const month = document.getElementById("monthSelect").value;
   const formattedDate = `${selectedDay.toString().padStart(2, '0')}/${(parseInt(month) + 1).toString().padStart(2, '0')}/${year}`;
 
-  // Bloquear la hora de las 15:00 solo para el 3 de octubre de 2024
-  if (formattedDate === '03/10/2024' && hour === '15:00') {
-    return true;
-  }
-
-  return false; // Las demás horas están disponibles
+  return unavailableDates.some(date => date.date === formattedDate && date.hour === hour);
 }
 
 // Función para seleccionar una hora y resaltarla
@@ -253,4 +254,3 @@ function isUnavailableDay(day, month, year) {
   // No bloquear el 3 de octubre como día, pero manejaremos las horas más tarde
   return false;
 }
-
