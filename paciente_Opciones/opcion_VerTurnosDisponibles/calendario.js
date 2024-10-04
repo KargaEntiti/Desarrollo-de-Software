@@ -88,7 +88,7 @@ function generateCalendar(year, month) {
 
         //agregar un listener al div
         dayDiv.onclick = function(){
-            console.log("dia pulsado" + dayDiv.innerText);
+            document.querySelector("#tablaTurnos").scrollIntoView({ behavior: "smooth" });
             filtrarPorFecha(getFechaCompleta(dayDiv.innerText,currentMonth,currentYear));
         }
 
