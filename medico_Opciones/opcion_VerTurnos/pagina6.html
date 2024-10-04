@@ -8,12 +8,35 @@ body {
   text-align: center;
   justify-content: center;
   align-items: center;
+  margin: 0;
   height: 100vh;
+}
+
+header {
+    background-color: #005f99;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    justify-content: flex-start;
 }
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.logo {
+    width: 50px;
+    height: auto;
+    margin-right: 15px;
+
+}
+
+.titulo-hospital {
+    margin: 0;
+    font-size: 60px;
+    color:#ffffff; 
 }
 .tabla-turnos{
     border-collapse: collapse;
@@ -30,8 +53,11 @@ body {
 }
 
 </style>
-
 </head>
+<header>
+    <img src="../../resources/imagen hospital.png" alt="Logotipo del Hospital" class="logo">
+    <h1 class="titulo-hospital">Hospital General</h1> <!-- Cambia "Hospital General" por el nombre de tu hospital -->
+</header>
 <body>
   <div class="container">
     </div>
