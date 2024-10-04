@@ -53,7 +53,7 @@ function llenarTurnosDisponibles(turnos){
         button.classList.add("reservarBoton");
         buttonCell.appendChild(button);
         button.addEventListener("click", function() {
-        reservarTurno(turnoID);
+        api_reservarTurno(turnoID);
         });
         row.appendChild(buttonCell);
 

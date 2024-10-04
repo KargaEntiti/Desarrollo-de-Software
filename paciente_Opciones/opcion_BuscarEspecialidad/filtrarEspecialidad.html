@@ -16,22 +16,16 @@
             <form id="form-turno">
                 <label for="especialidad">Especialidad Médica:</label>
                 <select id="especialidad" name="especialidad">
-                    <option value="" disabled selected>Selecciona una especialidad</option>
-                    <option value="cardiologia">Cardiología</option>
-                    <option value="pediatria">Pediatría</option>
-                    <option value="dermatologia">Dermatología</option>
-                    <option value="neurologia">Neurología</option>
-                    <option value="oftalmologia">Oftalmología</option>
+                    
                 </select>
 
-                <label for="fecha">Fecha de consulta:</label>
-                <input type="date" id="fecha" name="fecha" required>
 
-                <button type="submit">Buscar Turno</button>
             </form>
+            <button onclick="redirect()">Buscar Turno</button>
             <div id="resultado"></div>
         </section>
     </main>
+    <script src="../../resources/api.js"></script>
     <script src="scripts.js"></script>
 </body>
 </html>

@@ -1,11 +1,8 @@
 async function main(){
-
-    turnos = await queryTurnos();
+    turnos = await api_queryTurnos(sessionStorage.getItem('especialidadID'));
     llenarTurnosDisponibles(turnos);
     // Inicializar todo
     generarCalendario();
-
-
   }
   
 main();
