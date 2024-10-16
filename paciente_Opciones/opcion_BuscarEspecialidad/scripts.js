@@ -23,7 +23,9 @@ select = document.getElementById('especialidad');
 opciones = [];
 async function cargarEspecialidades(){
     let listaEspecialidades = await api_queryEspecialidades();
-
+    if (listaEspecialidades.length === 0){
+        popup("No hay especialidades a mostrar.");
+    }
     listaEspecialidades.forEach(especialidad => {
         opciones.push({key:especialidad.id, value:especialidad.nombre});
     });
