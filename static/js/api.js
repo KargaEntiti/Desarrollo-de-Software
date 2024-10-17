@@ -2,12 +2,23 @@
 
 api_url = 'http://localhost:8080'
 
+function guardarToken(token) {
+    localStorage.setItem('bearerToken', token);
+}
+// Función para cargar el token desde localStorage
+function cargarToken() {
+    return localStorage.getItem('bearerToken');
+}
+
+
 async function api_queryTurnos(especialidadID) {
   var listaTurnos = [];
   try {
       // Hacer la solicitud al servidor
       url = 'http://localhost:8080/verTurnos?especialidadID=' + especialidadID
-      const response = await fetch(url);
+      const response = await fetch(url,{
+        'Authorization': `Bearer ${cargarToken()}`
+      });
       if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');
       }
@@ -24,7 +35,9 @@ async function api_queryEspecialidades(){
   try {
       // Hacer la solicitud al servidor
       url = 'http://localhost:8080/verEspecialidades'
-      const response = await fetch(url);
+      const response = await fetch(url,{
+        'Authorization': `Bearer ${cargarToken()}`
+      });
       if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');
       }
