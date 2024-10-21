@@ -72,6 +72,10 @@ function popup(message) {
         #popup-close-btn:hover {
             background-color: #45a049;
         }
+        #popup-message{
+            font-family: sans-serif;
+            font-size: 20px;
+        }
     `;
     document.head.appendChild(style);
 
@@ -83,7 +87,7 @@ function popup(message) {
     document.getElementById("custom-popup").style.display = "flex";
 }
 
-function pop1(message) {
+function pop1(message,aceptar,cancelar) {
     return new Promise((resolve) => {
         let popupOverlay = document.getElementById("custom-popup");
 
@@ -109,7 +113,7 @@ function pop1(message) {
         // Crear el botón de Aceptar
         const acceptButton = document.createElement("button");
         acceptButton.id = "popup-accept-btn";
-        acceptButton.textContent = "Aceptar";
+        acceptButton.textContent = aceptar;
         acceptButton.onclick = function() {
             popupOverlay.style.display = "none";
             popupOverlay.remove();
@@ -119,7 +123,7 @@ function pop1(message) {
         // Crear el botón de Cancelar
         const cancelButton = document.createElement("button");
         cancelButton.id = "popup-cancel-btn";
-        cancelButton.textContent = "Cancelar";
+        cancelButton.textContent = cancelar;
         cancelButton.onclick = function() {
             popupOverlay.style.display = "none";
             popupOverlay.remove();

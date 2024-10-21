@@ -1,6 +1,7 @@
 
 
-api_url = 'http://localhost:8080'
+app_url = 'http://localhost:8080'
+
 
 function guardarToken(token) {
     localStorage.setItem('bearerToken', token);
@@ -14,7 +15,7 @@ function cargarToken() {
 async function api_queryTurnos(especialidadID) {
   var listaTurnos = [];
   try {
-      url = 'http://localhost:8080/api/verTurnos?id=' + especialidadID
+      url = app_url + '/api/verTurnos?id=' + especialidadID
       const response = await fetch(url);
       if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');
@@ -32,7 +33,7 @@ async function api_queryTurnos(especialidadID) {
 async function api_queryTurnosReservados(pacienteId) {
     var listaTurnos = [];
     try {
-        url = 'http://localhost:8080/api/verTurnosReservados?pacienteId=' + pacienteId
+        url = app_url + '/api/verTurnosReservados?pacienteId=' + pacienteId
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
@@ -48,7 +49,7 @@ async function api_queryTurnosReservados(pacienteId) {
 
 async function api_queryEspecialidades() {
     try {
-        const url = 'http://localhost:8080/api/verEspecialidades';
+        const url = app_url +'/api/verEspecialidades';
 
         const response = await fetch(url, {
             method: 'GET', 
@@ -78,7 +79,7 @@ function api_reservarTurno(id,pacienteId) {
             id: pacienteId
         }
     };
-    fetch("http://localhost:8080/api/reservarTurno", {
+    fetch(app_url+"/api/reservarTurno", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -94,25 +95,32 @@ function api_reservarTurno(id,pacienteId) {
     });
 }
 
+
 //hardcoded
 function api_cancelarTurno(id) {
-    const turno = {
-        id: id
-    };
-    fetch("http://localhost:8080/api/cancelarTurno", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(turno)
-    })
-    .then(response => response.json()) //Convertir respuesta a json
-    .then(data => {                    //El json.message imprimirlo en el popup
-        popup(data.message);
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
+    pop1("¿Desea cancelar el turno?","Si","No").then((result) => {
+        if (result) {
+                const turno = {
+                    id: id
+                };
+                fetch(app_url+"/api/cancelarTurno", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(turno)
+                })
+                .then(response => response.json()) //Convertir respuesta a json
+                .then(data => {                    //El json.message imprimirlo en el popup
+                    popup(data.message);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+        else{}
+});
+
 }
 
 
