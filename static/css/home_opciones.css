@@ -1,12 +1,9 @@
-
-body {
-    text-align: center;
-    margin:0;
-}
+/* Opciones de medico y paciente */
 
 .container {
     margin-top:40px;
     display: flex;
+    
     justify-content: center;
     align-items: center;
 }
@@ -26,4 +23,10 @@ body {
     text-align: center;
     line-height: 100px;
     cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .column{
+        flex-direction: column;
+    }
 }
