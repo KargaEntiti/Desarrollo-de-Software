@@ -32,27 +32,32 @@
           <input type="time" value="13:00">
           &nbsp;
           <button class="replicar">Replicar</button>
-        </td><td>
+        </td>
+        <td>
           <input type="time" value="09:00">
           <input type="time" value="13:00">
           &nbsp;
           <button class="replicar">Replicar</button>
-        </td><td>
+        </td>
+        <td>
           <input type="time" value="09:00">
           <input type="time" value="13:00">
           &nbsp;
           <button class="replicar">Replicar</button>
-        </td><td>
+        </td>
+        <td>
           <input type="time" value="09:00">
           <input type="time" value="13:00">
           &nbsp;
           <button class="replicar">Replicar</button>
-        </td><td>
+        </td>
+        <td>
           <input type="time" value="09:00">
           <input type="time" value="13:00">
           &nbsp;
           <button class="replicar">Replicar</button>
-        </td><td>
+        </td>
+        <td>
           <input type="time" value="09:00">
           <input type="time" value="13:00">
           &nbsp;
@@ -61,52 +66,130 @@
       </tr>
     </tbody>
   </table>
+  <div class="contenedor">
+  <button id="enviarTurnos">Enviar Turnos</button>
+  </div>
 
-    <script>
-const dayCheckboxes = document.querySelectorAll('thead th input[type="checkbox"]');
-const tableBody = document.querySelector('tbody');
-
-dayCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-        const day = checkbox.closest('th');
-        const checkboxesInDay = day.parentNode.nextElementSibling.querySelectorAll('input[type="checkbox"]');
-
-        checkboxesInDay.forEach(checkbox => {
-            checkbox.checked = checkbox.closest('th').querySelector('input[type="checkbox"]').checked;
+  <script>
+    const dayCheckboxes = document.querySelectorAll('thead th input[type="checkbox"]');
+    const tableBody = document.querySelector('tbody');
+    
+    dayCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const day = checkbox.closest('th');
+            const checkboxesInDay = day.parentNode.nextElementSibling.querySelectorAll('input[type="checkbox"]');
+    
+            checkboxesInDay.forEach(checkbox => {
+                checkbox.checked = checkbox.closest('th').querySelector('input[type="checkbox"]').checked;
+            });
+    
+            // Agregar elementos <input type="time"> a la columna correspondiente
+            const columnIndex = Array.from(day.parentNode.children).indexOf(day);
+            const row = tableBody.querySelector(`tr:nth-child(${columnIndex + 1})`);
+            row.querySelector('td').insertAdjacentHTML('beforeend', `
+                <input type="time" value="09:00">
+                <input type="time" value="13:00">
+            `);
         });
-
-        // Agregar elementos <input type="time"> a la columna correspondiente
-        const columnIndex = Array.from(day.parentNode.children).indexOf(day);
-        const row = tableBody.querySelector(`tr:nth-child(${columnIndex + 1})`);
-        row.querySelector('td').insertAdjacentHTML('beforeend', `
-            <input type="time" value="09:00">
-            <input type="time" value="13:00">
-        `);
     });
-});
-
-const replicarButtons = document.querySelectorAll('.replicar');
-
-replicarButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const cell = button.closest('td');
-    const timeInputs = cell.querySelectorAll('input[type="time"]');
-
-    const timeValues = Array.from(timeInputs).map(input => input.value);
-
-    const allCells = document.querySelectorAll('tbody td');
-
-    allCells.forEach(targetCell => {
-      if (targetCell !== cell) {
-        const targetTimeInputs = targetCell.querySelectorAll('input[type="time"]');
-        targetTimeInputs.forEach((input, index) => {
-          input.value = timeValues[index];
+    
+    const replicarButtons = document.querySelectorAll('.replicar');
+    
+    replicarButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const cell = button.closest('td');
+        const timeInputs = cell.querySelectorAll('input[type="time"]');
+    
+        const timeValues = Array.from(timeInputs).map(input => input.value);
+    
+        const allCells = document.querySelectorAll('tbody td');
+    
+        allCells.forEach(targetCell => {
+          if (targetCell !== cell) {
+            const targetTimeInputs = targetCell.querySelectorAll('input[type="time"]');
+            targetTimeInputs.forEach((input, index) => {
+              input.value = timeValues[index];
+            });
+          }
         });
-      }
+      });
     });
-  });
-});
-
-</script>
+    
+    // Función para enviar los turnos
+    document.getElementById('enviarTurnos').addEventListener('click', () => {
+        const turnos = [];
+        const dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+        
+        const rows = tableBody.querySelectorAll('tr');
+    
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+                const timeInputs = cell.querySelectorAll('input[type="time"]');
+                const dayCheckbox = dayCheckboxes[index];
+    
+                if (dayCheckbox.checked) {
+                    const ingreso = timeInputs[0].value; // Hora de ingreso
+                    const salida = timeInputs[1].value; // Hora de salida
+                    
+                    const [horaIngreso, minutoIngreso] = ingreso.split(':').map(Number);
+                    const [horaSalida, minutoSalida] = salida.split(':').map(Number);
+                    
+                    // Calcular la fecha base para el día
+                    for (let week = 0; week < 4; week++) {
+                        const nextDate = new Date(currentYear, currentMonth, currentDate.getDate() + (week * 7) + ((index + 1 - currentDate.getDay() + 7) % 7));
+                        
+                        // Generar turnos de 15 minutos
+                        for (let h = horaIngreso; h < horaSalida; h++) {
+                            for (let m = 0; m < 60; m += 15) {
+                                const turnoHora = new Date(nextDate);
+                                turnoHora.setHours(h);
+                                turnoHora.setMinutes(m);
+    
+                                // Solo agregar turnos que estén antes de la hora de salida
+                                if (turnoHora < new Date(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate(), horaSalida, minutoSalida)) {
+                                    turnos.push({
+                                        fecha: `${turnoHora.toISOString().split('T')[0]}T${turnoHora.toTimeString().split(' ')[0]}`,
+                                        medico: { id: 1 } // Cambia el ID del médico según sea necesario
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    
+        // Imprimir el JSON en la consola antes de enviar
+        console.log(JSON.stringify(turnos, null, 2)); // Imprime el JSON de manera legible
+    
+        // Enviar los turnos al servidor
+        fetch('http://localhost:8080/api/altaTurnos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(turnos)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la red');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Éxito:', data);
+            alert("Turnos enviados con éxito");
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Hubo un error al enviar los turnos");
+        });
+      });
+      </script>
 </body>
 </html>
