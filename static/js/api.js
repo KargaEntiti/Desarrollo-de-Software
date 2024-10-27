@@ -93,9 +93,25 @@ function api_reservarTurno(id,pacienteId) {
     .catch(error => {
         console.error("Error:", error);
     });
+    document.getElementById('loginBtn')
+    const email = document.getElementById('loginEmail').value;
+    api_enviarCorreo(email);
 }
 
-
+function api_enviarCorreo(email) {
+    fetch('/api/enviarCorreo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Muestra la respuesta del backend
+    })
+    .catch(error => console.error('Error:', error));
+}
 //hardcoded
 function api_cancelarTurno(id) {
     pop1("¿Desea cancelar el turno?","Si","No").then((result) => {
